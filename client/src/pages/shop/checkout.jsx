@@ -1,12 +1,17 @@
-import React from 'react'
+import React, { useState } from 'react'
 import banner from "../../assets/account.jpg"
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Address from '@/components/shop-view/address'
 import UserCartContentItems from '@/components/shop-view/userCartContentItems'
 import { Button } from '@/components/ui/button'
+import { createNewOrder } from '@/store/order-slice'
 const ShopCheckout = () => {
   const { cart } = useSelector((state) => state.cart)
-  console.log("cart item from checkout", cart);
+  const { user } = useSelector((state) => state.auth)
+  const { approvalURL } = useSelector((state) => state.order)
+  const [currentSelectedAddress, setCurrentSelectedAddress] = useState(null)
+  const dispatch = useDispatch()
+  console.log("dia chi duoc chon", currentSelectedAddress);
 
   function sumPrice(items) {
     let inititalValue = 0
@@ -18,6 +23,48 @@ const ShopCheckout = () => {
     }
   }
   const totalPrice = sumPrice(cart.item)
+  function handleInititalPayment() {
+    const orderData = {
+      userId: user?.id,
+      cartItems: cart.item.map(singleCartItem => ({
+        productId: singleCartItem.productId._id,
+        title: singleCartItem.productId.title,
+        image: singleCartItem.productId.image,
+        price: singleCartItem.productId.price,
+        salePrice: singleCartItem.productId.salePrice,
+        quantity: singleCartItem.quantity
+      })),
+
+      addressInfo: {
+        addressId: currentSelectedAddress._id,
+        address: currentSelectedAddress.address,
+        city: currentSelectedAddress.city,
+        pincode: currentSelectedAddress.pincode,
+        phone: currentSelectedAddress.phone,
+        notes: currentSelectedAddress.notes,
+      },
+      orderStatus: 'pending',
+      paymentMethod: 'paypal',
+      paymentStatus: 'pending',
+      totalAmount: totalPrice,
+      orderDate: new Date(),
+      orderUpdateDate: new Date(),
+      paymentId: '',
+      payerId: ''
+    }
+    console.log("data payment", orderData);
+    dispatch(createNewOrder(orderData))
+      .then((data) => {
+        console.log(data.payload.approvalURL);
+
+      })
+
+    if (approvalURL) {
+      window.location.href = approvalURL
+    }
+  }
+
+
   return (
     <div className='flex flex-col'>
       <div className='relative w-full h-[300px] '>
@@ -25,7 +72,10 @@ const ShopCheckout = () => {
       </div>
       <div className='grid grid-cols-1 md:grid-cols-2 my-8 mx-4 gap-3'>
         <div className='border rounded-lg max-h-fit'>
-          <Address />
+          <Address
+            currentSelectedAddress={currentSelectedAddress}
+            setCurrentSelectedAddress={setCurrentSelectedAddress}
+          />
         </div>
         <div className='flex flex-col'>
           {cart && cart.item && cart.item.length > 0 ? cart.item.map(item => <UserCartContentItems cartItem={item} />) : null}
@@ -36,12 +86,12 @@ const ShopCheckout = () => {
             <span className='text-lg font-medium'>Total</span>
             <span className='text-lg font-medium text-orange-500'>${totalPrice}</span>
           </div>
-
+          <Button onClick={handleInititalPayment} className='rounded-xs w-[50%] h-12 mt-5'>
+            Checkout with paypal
+          </Button>
         </div>
       </div>
-      <Button>
-        Checkout with paypal
-      </Button>
+
     </div>
   )
 }

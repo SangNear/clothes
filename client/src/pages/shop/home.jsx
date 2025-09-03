@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import banner1 from "../../assets/banner/banner-1.webp"
 import banner2 from "../../assets/banner/banner-2.webp"
 import banner3 from "../../assets/banner/banner-3.webp"
@@ -11,7 +11,13 @@ import ShopingProduct from '@/components/shop-view/product-title'
 import { useNavigate } from 'react-router-dom'
 import { addCart, fetchCart } from '@/store/cartSlice'
 import { toast } from 'sonner'
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger)
 const HomePage = () => {
+  const cardsRef = useRef([]);
+  const cardsRef2 = useRef([]);
   const banners = [banner1, banner2, banner3]
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -33,6 +39,40 @@ const HomePage = () => {
     { id: "h&m", label: "H&M", icon: Landmark },
   ]
   const [currentSlide, setCurrentSlide] = useState(0)
+
+  useEffect(() => {
+    gsap.fromTo(
+      cardsRef.current,
+      { y: 50, opacity: 0 },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 0.1,
+        stagger: 0.2, // từng card xuất hiện cách nhau 0.2s
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: cardsRef.current[0]?.parentNode, // trigger toàn bộ grid
+          start: "top 85%", // khi grid vào 85% viewport
+        },
+      }
+    );
+     gsap.fromTo(
+      cardsRef2.current,
+      { y: 50, opacity: 0 },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 0.1,
+        stagger: 0.2, // từng card xuất hiện cách nhau 0.2s
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: cardsRef2.current[0]?.parentNode, // trigger toàn bộ grid
+          start: "top 85%", // khi grid vào 85% viewport
+        },
+      }
+    );
+  }, []);
+
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -99,8 +139,8 @@ const HomePage = () => {
         <div className='container mx-auto'>
           <h2 className='text-3xl text-center font-bold'>Shop by Category</h2>
           <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-15 py-5'>
-            {category.map((item) => (
-              <Card onClick={() => handleNagativeOnlisting(item.id, 'category')} key={item.id} className="cursor-pointer hover:scale-90 transition-all duration-200" >
+            {category.map((item, index) => (
+              <Card ref={(el) => (cardsRef.current[index] = el)} onClick={() => handleNagativeOnlisting(item.id, 'category')} key={item.id} className="cursor-pointer hover:scale-90 transition-all duration-200" >
                 <CardContent className="flex flex-col justify-center items-center">
                   <item.icon className='w-12 h-12 text-primary' />
                   <span>{item.label}</span>
@@ -115,8 +155,8 @@ const HomePage = () => {
         <div className='container mx-auto'>
           <h2 className='text-3xl text-center font-bold'>Shop by Brands</h2>
           <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-15 py-5'>
-            {brand.map((item) => (
-              <Card onClick={() => handleNagativeOnlisting(item.id, 'brand')} key={item.id} className="cursor-pointer hover:scale-90 transition-all duration-200" >
+            {brand.map((item,index) => (
+              <Card ref={(el) => (cardsRef2.current[index] = el)} onClick={() => handleNagativeOnlisting(item.id, 'brand')} key={item.id} className="cursor-pointer hover:scale-90 transition-all duration-200" >
                 <CardContent className="flex flex-col justify-center items-center">
                   <item.icon className='w-12 h-12 text-primary' />
                   <span>{item.label}</span>

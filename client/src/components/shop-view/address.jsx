@@ -14,15 +14,18 @@ const initialValue = {
     phone: '',
     notes: '',
 }
-const Address = () => {
+const Address = ({ setCurrentSelectedAddress, currentSelectedAddress }) => {
     const [formData, setFormData] = useState(initialValue)
     const [openFormAddress, setOpenFormAddress] = useState(false)
     const dispatch = useDispatch()
     const { user } = useSelector((state) => state.auth)
     const { addressList } = useSelector((state) => state.address)
-    const [currentAddress, setCurrentAddress] = useState(null)
+    const [currentEditAddress, setCurrentEditAddress] = useState(null)
     useEffect(() => {
-        dispatch(fetchAllAddresses({ userId: user?.id }))
+        dispatch(fetchAllAddresses({ userId: user?.id })).then((data) => {
+            setCurrentSelectedAddress(data.payload.data[0]);
+            
+        })
     }, [dispatch])
 
     function isFormValid() {
@@ -39,8 +42,8 @@ const Address = () => {
     }
     const onSubmit = (e) => {
         e.preventDefault()
-        if (currentAddress) {
-            dispatch(updateAddress({ userId: user?.id, addressId: currentAddress._id, formData }))
+        if (currentEditAddress) {
+            dispatch(updateAddress({ userId: user?.id, addressId: currentEditAddress._id, formData }))
                 .then((data) => {
                     if (data?.payload?.success) {
                         setFormData(initialValue)
@@ -75,11 +78,13 @@ const Address = () => {
                         <AddressItem
                             key={addressitem._id}
                             setOpenFormAddress={setOpenFormAddress}
-                            setCurrentAddress={setCurrentAddress}
+                            setCurrentEditAddress={setCurrentEditAddress}
                             handleDeleteAddress={handleDeleteAddress}
                             addressItem={addressitem}
                             index={index}
                             setFormData={setFormData}
+                            currentSelectedAddress={currentSelectedAddress}
+                            setCurrentSelectedAddress={setCurrentSelectedAddress}
                         />
                     ))
                     :
@@ -101,7 +106,7 @@ const Address = () => {
                         formData={formData}
                         setFormData={setFormData}
                         onSubmit={onSubmit}
-                        buttonText={currentAddress ? "Update" : "Add new address"}
+                        buttonText={currentEditAddress ? "Update" : "Add new address"}
                         isBtnDisabled={!isFormValid()}
                     />
                     :
