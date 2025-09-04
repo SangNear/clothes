@@ -5,7 +5,6 @@ import { Button } from '../ui/button';
 import { useNavigate } from 'react-router-dom';
 
 const UserCartWrapper = ({ cart, setOpenCartSheet }) => {
-    console.log("check cart info", cart);
     const navigate = useNavigate()
     function sumPrice(items) {
         let inititalValue = 0
@@ -17,11 +16,11 @@ const UserCartWrapper = ({ cart, setOpenCartSheet }) => {
         }
     }
     const totalPrice = sumPrice(cart)
-    const handleCheckout = (e) => {
-        e.preventDefault()
-        navigate('/shop/checkout')
+    // const handleCheckout = (e) => {
+    //     e.preventDefault()
+    //     navigate('/shop/checkout')
 
-    }
+    // }
     return (
         <SheetContent side='right' className='p-4 '>
             <SheetHeader className='text-xl font-semibold px-0'>Your Cart</SheetHeader>

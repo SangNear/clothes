@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import banner from "../../assets/account.jpg"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import Address from '@/components/shop-view/address'
 import ShoppingOders from '@/components/shop-view/shopOrder'
 const ShopAccount = () => {
+  const [currentSelectedAddress, setCurrentSelectedAddress] = useState(null)
   return (
     <div className='flex flex-col'>
       <div className='relative w-full h-[300px] overflow-hidden '>
@@ -19,7 +20,7 @@ const ShopAccount = () => {
             <ShoppingOders />
           </TabsContent>
           <TabsContent value="address">
-            <Address />
+            <Address currentSelectedAddress={currentSelectedAddress} setCurrentSelectedAddress={setCurrentSelectedAddress} />
           </TabsContent>
         </Tabs>
       </div>

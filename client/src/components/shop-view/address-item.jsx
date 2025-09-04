@@ -1,6 +1,6 @@
 import React from 'react'
 import { Card, CardContent } from '../ui/card'
-import { Pencil, X } from 'lucide-react'
+import { Pencil, Trash, X } from 'lucide-react'
 import Loading from '../common/loading'
 
 const AddressItem = ({
@@ -14,13 +14,13 @@ const AddressItem = ({
 }) => {
     return currentSelectedAddress ? (
         <Card
-            className={`relative ${addressItem._id === currentSelectedAddress._id ? "" : "opacity-60 cursor-pointer hover:scale-105 transition-all duration-500"}`}
+            className={`relative ${addressItem._id === currentSelectedAddress._id ? "" : "opacity-15 cursor-pointer hover:scale-105 transition-all duration-500"}`}
             onClick={() => setCurrentSelectedAddress(addressItem)}
         >
             {addressItem._id === currentSelectedAddress._id && (
-                <X
+                <Trash
                     onClick={() => handleDeleteAddress(addressItem._id)}
-                    className='absolute top-2 right-2 hover:scale-75 transition-all duration-500 cursor-pointer'
+                    className='w-4 text-red-500 absolute top-2 right-2 hover:scale-75 transition-all duration-500 cursor-pointer'
                 />
             )}
 
@@ -48,7 +48,7 @@ const AddressItem = ({
                         });
                         setOpenFormAddress(true);
                     }}
-                    className='absolute bottom-2 right-2 hover:scale-75 transition-all duration-500 cursor-pointer'
+                    className='w-4 absolute bottom-2 right-2 hover:scale-75 transition-all duration-500 cursor-pointer'
                 />
             )}
         </Card>

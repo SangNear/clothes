@@ -34,11 +34,15 @@ function HeaderContentRight() {
     navigate("/auth/login")
     localStorage.removeItem('user')
   }
-  console.log("userid", user?.id);
+ 
 
   useEffect(() => {
     if (user?.id) {
       dispatch(fetchCart(user.id))
+    }
+    else {
+      console.log("user chua dang nhap nen khong lay duoc gio hang");
+      
     }
   }, [dispatch, user?.id])
 

@@ -5,14 +5,14 @@ import Address from '@/components/shop-view/address'
 import UserCartContentItems from '@/components/shop-view/userCartContentItems'
 import { Button } from '@/components/ui/button'
 import { createNewOrder } from '@/store/order-slice'
+import { toast } from 'sonner'
+import Loading from '@/components/common/loading'
 const ShopCheckout = () => {
   const { cart } = useSelector((state) => state.cart)
   const { user } = useSelector((state) => state.auth)
-  const { approvalURL } = useSelector((state) => state.order)
+  const { approvalURL, isLoading } = useSelector((state) => state.order)
   const [currentSelectedAddress, setCurrentSelectedAddress] = useState(null)
   const dispatch = useDispatch()
-  console.log("dia chi duoc chon", currentSelectedAddress);
-
   function sumPrice(items) {
     let inititalValue = 0
     if (Array.isArray(items)) {
@@ -24,8 +24,13 @@ const ShopCheckout = () => {
   }
   const totalPrice = sumPrice(cart.item)
   function handleInititalPayment() {
+    if (cart.item.length === 0) {
+      toast.error("Your cart is empty. Please add item to proceed")
+      return
+    }
     const orderData = {
       userId: user?.id,
+      cartId: cart._id,
       cartItems: cart.item.map(singleCartItem => ({
         productId: singleCartItem.productId._id,
         title: singleCartItem.productId.title,
@@ -59,9 +64,10 @@ const ShopCheckout = () => {
 
       })
 
-    if (approvalURL) {
-      window.location.href = approvalURL
-    }
+
+  }
+  if (approvalURL) {
+    window.location.href = approvalURL
   }
 
 
@@ -86,8 +92,10 @@ const ShopCheckout = () => {
             <span className='text-lg font-medium'>Total</span>
             <span className='text-lg font-medium text-orange-500'>${totalPrice}</span>
           </div>
-          <Button onClick={handleInititalPayment} className='rounded-xs w-[50%] h-12 mt-5'>
-            Checkout with paypal
+          <Button onClick={handleInititalPayment} className='rounded-xs w-[50%] mx-auto my-10 h-12 mt-5'>
+            {
+              isLoading ? <Loading /> : "Check with paypal"
+            }
           </Button>
         </div>
       </div>
