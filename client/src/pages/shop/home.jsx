@@ -135,7 +135,7 @@ const HomePage = () => {
           <ChevronRight />
         </Button>
       </div>
-      <section className='bg-gray-50 py-12 px-4'>
+      <section className=' py-12 px-4'>
         <div className='container mx-auto'>
           <h2 className='text-3xl text-center font-bold'>Shop by Category</h2>
           <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-15 py-5'>
@@ -151,7 +151,7 @@ const HomePage = () => {
         </div>
 
       </section>
-      <section className='bg-gray-50 py-12 px-4'>
+      <section className=' py-12 px-4'>
         <div className='container mx-auto'>
           <h2 className='text-3xl text-center font-bold'>Shop by Brands</h2>
           <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-15 py-5'>
@@ -177,7 +177,6 @@ const HomePage = () => {
         </div>
       </section>
     </div>
-
   )
 }
 

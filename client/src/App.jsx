@@ -1,27 +1,27 @@
-
 import './App.css'
 import { Route, Routes } from 'react-router-dom'
-import AuthLayout from './components/auth-view/layout'
-import AuthLogin from './pages/auth/login'
-import AuthRegister from './pages/auth/register'
-import AdminLayout from './components/admin-view/layout'
-import AdminDashboard from './pages/admin/dashboard'
-import AdminFeatures from './pages/admin/features'
-import AdminProduct from './pages/admin/products'
-import AdminOrders from './pages/admin/orders'
-import HomePage from './pages/shop/home'
-import ShopCheckout from './pages/shop/checkout'
-import ShopListing from './pages/shop/listing'
-import ShopAccount from './pages/shop/account'
-import ShopLayout from './components/shop-view/layout'
-import CheckAuth from './components/common/checkAuth'
+import { Suspense, lazy, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useEffect } from 'react'
 import { checkAuth } from './store/authSlice'
-import NotFoundPage from './pages/not-found'
+import CheckAuth from './components/common/checkAuth'
 
-import PaypalSuccess from './pages/shop/paypal-success'
-import PaypalReturn from './pages/shop/paypal-return'
+// Lazy imports
+const AuthLayout = lazy(() => import('./components/auth-view/layout'))
+const AuthLogin = lazy(() => import('./pages/auth/login'))
+const AuthRegister = lazy(() => import('./pages/auth/register'))
+const AdminLayout = lazy(() => import('./components/admin-view/layout'))
+const AdminDashboard = lazy(() => import('./pages/admin/dashboard'))
+const AdminFeatures = lazy(() => import('./pages/admin/features'))
+const AdminProduct = lazy(() => import('./pages/admin/products'))
+const AdminOrders = lazy(() => import('./pages/admin/orders'))
+const ShopLayout = lazy(() => import('./components/shop-view/layout'))
+const HomePage = lazy(() => import('./pages/shop/home'))
+const ShopCheckout = lazy(() => import('./pages/shop/checkout'))
+const ShopListing = lazy(() => import('./pages/shop/listing'))
+const ShopAccount = lazy(() => import('./pages/shop/account'))
+const PaypalSuccess = lazy(() => import('./pages/shop/paypal-success'))
+const PaypalReturn = lazy(() => import('./pages/shop/paypal-return'))
+const NotFoundPage = lazy(() => import('./pages/not-found'))
 
 function App() {
   const { user, isAuthenticated, isLoading } = useSelector(state => state.auth)
@@ -31,55 +31,50 @@ function App() {
     dispatch(checkAuth())
   }, [dispatch])
 
-  if (isLoading) return <div>Loading</div>
+  if (isLoading) return <div>Loading...</div>
+
   return (
-    <Routes>
-      <Route path='/' element={
-        <CheckAuth isLoading={isLoading} isAuthenticated={isAuthenticated} user={user}>
+    <Suspense fallback={<div>Loading page...</div>}>
+      <Routes>
+        <Route path='/' element={
+          <CheckAuth isLoading={isLoading} isAuthenticated={isAuthenticated} user={user}>
+            {/* Có thể render homepage hoặc redirect */}
+          </CheckAuth>
+        } />
 
-        </CheckAuth>
-      }>
+        <Route path='/auth' element={
+          <CheckAuth isLoading={isLoading} isAuthenticated={isAuthenticated} user={user}>
+            <AuthLayout />
+          </CheckAuth>}>
+          <Route path='login' element={<AuthLogin />} />
+          <Route path='register' element={<AuthRegister />} />
+        </Route>
 
-      </Route>
-      <Route path='/auth' element={
-        <CheckAuth isLoading={isLoading} isAuthenticated={isAuthenticated} user={user}>
-          <AuthLayout />
-        </CheckAuth>}>
-        <Route path='login' element={<AuthLogin />} />
-        <Route path='register' element={<AuthRegister />} />
-      </Route>
+        <Route path='/admin' element={
+          <CheckAuth isLoading={isLoading} isAuthenticated={isAuthenticated} user={user}>
+            <AdminLayout />
+          </CheckAuth>}>
+          <Route path='dashboard' element={<AdminDashboard />} />
+          <Route path='features' element={<AdminFeatures />} />
+          <Route path='products' element={<AdminProduct />} />
+          <Route path='orders' element={<AdminOrders />} />
+        </Route>
 
+        <Route path='/shop' element={
+          <CheckAuth isLoading={isLoading} isAuthenticated={isAuthenticated} user={user}>
+            <ShopLayout />
+          </CheckAuth>}>
+          <Route path='home' element={<HomePage />} />
+          <Route path='checkout' element={<ShopCheckout />} />
+          <Route path='listing' element={<ShopListing />} />
+          <Route path='account' element={<ShopAccount />} />
+          <Route path='paypal-return' element={<PaypalReturn />} />
+          <Route path='payment-success' element={<PaypalSuccess />} />
+        </Route>
 
-      <Route path='/admin' element={
-        <CheckAuth isLoading={isLoading} isAuthenticated={isAuthenticated} user={user}>
-          <AdminLayout />
-        </CheckAuth>}
-      >
-        <Route path='dashboard' element={<AdminDashboard />}></Route>
-        <Route path='features' element={<AdminFeatures />}></Route>
-        <Route path='products' element={<AdminProduct />}></Route>
-        <Route path='orders' element={<AdminOrders />}></Route>
-      </Route>
-
-
-
-      <Route path='/shop' element={
-        <CheckAuth isLoading={isLoading} isAuthenticated={isAuthenticated} user={user}>
-          <ShopLayout />
-        </CheckAuth>}
-      >
-        <Route path='home' element={<HomePage />}></Route>
-        <Route path='checkout' element={<ShopCheckout />}></Route>
-        <Route path='listing' element={<ShopListing />}></Route>
-        <Route path='account' element={<ShopAccount />}></Route>
-        <Route path='paypal-return' element={<PaypalReturn />}></Route>
-        <Route path='payment-success' element={<PaypalSuccess />}></Route>
-      </Route>
-
-      <Route path='*' element={<NotFoundPage />}></Route>
-
-
-    </Routes>
+        <Route path='*' element={<NotFoundPage />} />
+      </Routes>
+    </Suspense>
   )
 }
 

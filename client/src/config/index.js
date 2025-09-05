@@ -1,44 +1,44 @@
 import { Bolt, LayoutDashboard, NotebookPen, Package } from "lucide-react"
 
 export const registerFormControl = [
-    {
-        name: 'userName',
-        label: 'Username',
-        placeholder: 'Enter your username',
-        componentType: 'input',
-        type: 'text',
-    },
-    {
-        name: 'email',
-        label: 'Email',
-        placeholder: 'Enter your email',
-        componentType: 'input',
-        type: 'email',
-    },
-    {
-        name: 'password',
-        label: 'Password',
-        placeholder: 'Enter your password',
-        componentType: 'input',
-        type: 'password',
-    },
+  {
+    name: 'userName',
+    label: 'Username',
+    placeholder: 'Enter your username',
+    componentType: 'input',
+    type: 'text',
+  },
+  {
+    name: 'email',
+    label: 'Email',
+    placeholder: 'Enter your email',
+    componentType: 'input',
+    type: 'email',
+  },
+  {
+    name: 'password',
+    label: 'Password',
+    placeholder: 'Enter your password',
+    componentType: 'input',
+    type: 'password',
+  },
 ]
 
 export const loginFormControl = [
-    {
-        name: 'email',
-        label: 'Email',
-        placeholder: 'Enter your email',
-        componentType: 'input',
-        type: 'email',
-    },
-    {
-        name: 'password',
-        label: 'Password',
-        placeholder: 'Enter your password',
-        componentType: 'input',
-        type: 'password',
-    }
+  {
+    name: 'email',
+    label: 'Email',
+    placeholder: 'Enter your email',
+    componentType: 'input',
+    type: 'email',
+  },
+  {
+    name: 'password',
+    label: 'Password',
+    placeholder: 'Enter your password',
+    componentType: 'input',
+    type: 'password',
+  }
 ]
 
 export const addProductFormElements = [
@@ -112,27 +112,27 @@ export const shopingHeaderMenuItems = [
   {
     id: 'men',
     label: 'Men',
-    path: '/shop/home'
+    path: '/shop/listing'
   },
   {
     id: 'women',
     label: 'Women',
-    path: '/shop/women'
+    path: '/shop/listing'
   },
   {
     id: 'kids',
     label: 'Kids',
-    path: '/shop/kids'
+    path: '/shop/listing'
   },
   {
     id: 'footwear',
     label: 'Footwear',
-    path: '/shop/footwear'
+    path: '/shop/listing'
   },
   {
     id: 'accessories',
     label: 'Accessories',
-    path: '/shop/accessories'
+    path: '/shop/listing'
   },
 ]
 
