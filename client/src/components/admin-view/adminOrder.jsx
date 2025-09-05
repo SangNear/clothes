@@ -1,10 +1,21 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table'
 import { Button } from '../ui/button'
 import { Dialog, DialogTrigger } from '../ui/dialog'
 import OrderDetail from './order-detail'
+import { useDispatch, useSelector } from 'react-redux'
+import { getAllOrderAdmin } from '@/store/adminSlice/order'
+import { Badge } from '../ui/badge'
+import Loading from '../common/loading'
 const AdminOrderView = () => {
+    const dispatch = useDispatch()
+    const [opentDialogDetail, setOpentDialogDetail] = useState(false)
+    const [currentOrderIdSelected, setCurrentOrderIdSelected] = useState(null)
+    const { orderList } = useSelector(state => state.adminOrder)
+    useEffect(() => {
+        dispatch(getAllOrderAdmin())
+    }, [dispatch])
     return (
         <Card>
             <CardHeader>
@@ -26,22 +37,36 @@ const AdminOrderView = () => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        
-                        <TableRow>
-                            <TableCell>123456</TableCell>
-                            <TableCell>26/7/1999</TableCell>
-                            <TableCell>Process</TableCell>
-                            <TableCell>54.00</TableCell>
-                            <TableCell>
-                                <Dialog>
-                                    <DialogTrigger>
-                                        <Button className="cursor-pointer">View Detail</Button>
-                                    </DialogTrigger>
-                                    <OrderDetail />
-                                </Dialog>
 
-                            </TableCell>
-                        </TableRow>
+                        {orderList && orderList.length > 0
+                            ? orderList.map((orderItem, index) => (
+                                <TableRow key={orderItem._id}>
+                                    <TableCell>{index + 1}</TableCell>
+                                    <TableCell>{orderItem.orderDate.split('T')[0]}</TableCell>
+                                    <TableCell><Badge className={`text-md ${orderItem.orderStatus === 'confirm' ? 'bg-green-600' : ""}`}>{orderItem.orderStatus}</Badge></TableCell>
+                                    <TableCell>{orderItem.totalAmount}</TableCell>
+                                    <TableCell>
+                                        <Dialog open={opentDialogDetail} onOpenChange={setOpentDialogDetail}>
+                                            <Button
+                                                onClick={() => {
+                                                    setCurrentOrderIdSelected(orderItem._id),
+                                                        setOpentDialogDetail(true)
+                                                }
+                                                }
+                                                className="cursor-pointer"
+                                            >
+                                                View Detail
+                                            </Button>
+                                            {orderItem._id === currentOrderIdSelected ? <OrderDetail isAdmin={true} orderDetail={orderItem} /> : ""}
+                                        </Dialog>
+
+
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                            :
+                            <Loading />
+                        }
                     </TableBody>
                 </Table>
             </CardContent>

@@ -3,19 +3,30 @@ import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog'
 import { Label } from '../ui/label'
 import { Separator } from '../ui/separator'
 import CommonForm from '../common/form'
+import { useDispatch, useSelector } from 'react-redux'
+import { getAllOrderAdmin, updateStatusOrder } from '@/store/adminSlice/order'
+import { toast } from 'sonner'
 
-const initialFormData = {
-    status: ''
-}
-const OrderDetail = ({ orderDetail }) => {
+
+const OrderDetail = ({ orderDetail, isAdmin }) => {
+    const initialFormData = {
+        status: orderDetail.orderStatus
+    }
+    const dispatch = useDispatch()
     const [formData, setFormData] = useState(initialFormData)
-    console.log("order detail", orderDetail);
 
+    console.log("order detail", orderDetail);
     const handleUpdateStatus = (e) => {
         console.log("status", formData);
-
         e.preventDefault()
+        dispatch(updateStatusOrder({ id: orderDetail._id, orderStatus: formData.status })).then((data) => {
+            if (data?.payload?.success) {
+                dispatch(getAllOrderAdmin())
+                toast.success("Đã cập nhật trạng thái đơn hàng")
+            }
+        })
     }
+
     return (
         <DialogContent>
             <div className='flex items-center justify-between mt-4'>
@@ -41,7 +52,7 @@ const OrderDetail = ({ orderDetail }) => {
                     {orderDetail && orderDetail.cartItems.length > 0
                         ?
                         orderDetail.cartItems.map((productItem) => (
-                            <div className='flex items-center gap-4'>
+                            <div key={productItem._id} className='flex items-center gap-4'>
                                 <span className='text-sm italic min-w-56'>{productItem.title}</span>
                                 <div className='relative w-10 max-h-7 overflow-hidden rounded-md'>
                                     <img src={productItem.image} alt={productItem.title} className='w-full object-cover h-full ' />
@@ -60,6 +71,7 @@ const OrderDetail = ({ orderDetail }) => {
 
 
                 <h3 className='font-medium'>Shipping Info</h3>
+
                 <div className='flex flex-col'>
                     <span className='text-md text-gray-600 italic'>{orderDetail.addressInfo.address}</span>
                     <span className='text-md text-gray-600 italic'>{orderDetail.addressInfo.city}</span>
@@ -67,7 +79,7 @@ const OrderDetail = ({ orderDetail }) => {
                     <span className='text-md text-gray-600 italic'>{orderDetail.addressInfo.notes}</span>
                 </div>
 
-                <CommonForm
+                {isAdmin ? <CommonForm
                     formControls={
                         [
                             {
@@ -88,7 +100,9 @@ const OrderDetail = ({ orderDetail }) => {
                     onSubmit={handleUpdateStatus}
                     setFormData={setFormData}
                     buttonText="Update Order Status"
-                />
+                /> : ""}
+
+
             </div>
         </DialogContent>
     )

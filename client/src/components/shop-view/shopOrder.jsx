@@ -63,7 +63,7 @@ const ShoppingOders = () => {
                                             >
                                                 View Detail
                                             </Button>
-                                            {orderItem._id === currentOrderIdSelected ? <OrderDetail orderDetail={orderItem} /> : ""}
+                                            {orderItem._id === currentOrderIdSelected ? <OrderDetail isAdmin={false} orderDetail={orderItem} /> : ""}
                                         </Dialog>
 
 
